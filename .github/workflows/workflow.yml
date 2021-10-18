@@ -48,10 +48,10 @@ jobs:
       - name: Setup dotnet versions
         uses: ./
         with:
-          dotnet-version: '3.1.201,2.2.402,5.0.402'
+          dotnet-version: '3.1.201,2.2.402'
       - name: Verify dotnet
         shell: pwsh
-        run: __tests__/verify-dotnet.ps1 3.1.201 2.2.402 5.0.402
+        run: __tests__/verify-dotnet.ps1 3.1.201 2.2.402
 
   test-setup-full-version:
     runs-on: ${{ matrix.operating-system }}
