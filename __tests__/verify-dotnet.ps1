@@ -6,12 +6,16 @@ if (!$args[0])
 $dotnet = Get-Command dotnet | Select-Object -First 1 | ForEach-Object { $_.Path }
 Write-Host "Found '$dotnet'"
 
-$version = & $dotnet --version | Out-String | ForEach-Object { $_.Trim() }
-Write-Host "Version $version"
-if (-not ($version.StartsWith($args[0].ToString())))
+if($args.count -eq 0)
 {
-  Write-Host "PATH='$env:PATH'"
-  throw "Unexpected version"
+
+  $version = & $dotnet --version | Out-String | ForEach-Object { $_.Trim() }
+  Write-Host "Version $version"
+  if (-not ($version.StartsWith($args[0].ToString())))
+  {
+    Write-Host "PATH='$env:PATH'"
+    throw "Unexpected version"
+  }
 }
 
 if ($args[1])
@@ -20,14 +24,11 @@ if ($args[1])
   $versions = & $dotnet --list-sdks | ForEach-Object { $_.SubString(0, $_.IndexOf('[')).Trim() }
   Write-Host "Installed versions: $versions"
   $isInstalledVersion = $false
-  foreach ($version in $versions)
+  if( $versions -contains $args )
   {
-    if ($version.StartsWith($args[1].ToString())) 
-    {
-      $isInstalledVersion = $true
-      break
-    }
+    $isInstalledVersion = $true
   }
+  
   if (-not $isInstalledVersion)
   {
     Write-Host "PATH='$env:PATH'"
