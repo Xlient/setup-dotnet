@@ -6,7 +6,7 @@ if (!$args[0])
 $dotnet = Get-Command dotnet | Select-Object -First 1 | ForEach-Object { $_.Path }
 Write-Host "Found '$dotnet'"
 
-if($args.count -eq 0)
+if($args.count -eq 1)
 {
 
   $version = & $dotnet --version | Out-String | ForEach-Object { $_.Trim() }
@@ -23,16 +23,18 @@ if ($args[1])
   # SDKs are listed on multiple lines with the path afterwards in square brackets
   $versions = & $dotnet --list-sdks | ForEach-Object { $_.SubString(0, $_.IndexOf('[')).Trim() }
   Write-Host "Installed versions: $versions"
-  $isInstalledVersion = $false
-  if( $versions -contains $args[0] )
-  {
-      if( $versions -contains $args[1] )
+  $InstalledVersionCount = 0
+  foreach($arg in $args){
+    foreach ($version in $versions)
     {
-      $isInstalledVersion = $true
+      if ($version.StartsWith($arg.ToString())) 
+      {
+        $InstalledVersionCount++
+        
+      }
     }
-  }
-  
-  if (-not $isInstalledVersion)
+   }
+  if ( $InstalledVersionCount -ne $args.Count)
   {
     Write-Host "PATH='$env:PATH'"
     throw "Unexpected version"
@@ -53,6 +55,13 @@ Write-Host "Sample output: $sample_output"
 if ($args[1])
 {
   if ($sample_output -notlike "*Test Run Successful.*Test Run Successful.*")
+  {
+    throw "Unexpected output"
+  }
+}
+if ($args[2])
+{
+  if ($sample_output -notlike "*Test Run Successful.*Test Run Successful.*Test Run Successful.*")
   {
     throw "Unexpected output"
   }
