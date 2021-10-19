@@ -24,9 +24,12 @@ if ($args[1])
   $versions = & $dotnet --list-sdks | ForEach-Object { $_.SubString(0, $_.IndexOf('[')).Trim() }
   Write-Host "Installed versions: $versions"
   $isInstalledVersion = $false
-  if( $versions -contains $args )
+  if( $versions -contains $args[0] )
   {
-    $isInstalledVersion = $true
+      if( $versions -contains $args[1] )
+    {
+      $isInstalledVersion = $true
+    }
   }
   
   if (-not $isInstalledVersion)
