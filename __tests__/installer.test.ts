@@ -127,3 +127,8 @@ async function getDotnet(version: string): Promise<void> {
   const dotnetInstaller = new installer.DotnetCoreInstaller(version);
   await dotnetInstaller.installDotnet();
 }
+
+async function getDotnetVersions(versions: string[]): Promise<void> {
+  const dotnetInstaller = new installer.DotnetCoreInstaller("",versions);
+  await dotnetInstaller.installDotnetVersions();
+}
