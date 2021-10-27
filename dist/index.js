@@ -18145,7 +18145,7 @@ class DotnetCoreInstaller {
             try {
                 for (var _b = __asyncValues(this.versions), _c; _c = yield _b.next(), !_c.done;) {
                     const version = _c.value;
-                    let calculatedVersion = yield this.resolveVersion(new DotNetVersionInfo(version));
+                    let calculatedVersion = yield this.resolveVersion(new DotNetVersionInfo(version.trim()));
                     var envVariables = {};
                     for (let key in process.env) {
                         if (process.env[key]) {

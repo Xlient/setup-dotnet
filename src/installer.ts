@@ -204,7 +204,7 @@ export class DotnetCoreInstaller {
     let resultCode = 0;
     for await (const version of this.versions) {
       let calculatedVersion = await this.resolveVersion(
-        new DotNetVersionInfo(version)
+        new DotNetVersionInfo(version.trim())
       );
 
       var envVariables: {[key: string]: string} = {};
