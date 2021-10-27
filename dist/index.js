@@ -8684,6 +8684,9 @@ function run() {
                     version = getVersionFromGlobalJson(globalJsonPath);
                 }
             }
+            if (version && versions) {
+                core.warning("Multiple version inputs have been specified, Please specify either 'dotnet-version' or 'dotnet-versions'");
+            }
             if (version) {
                 const includePrerelease = (core.getInput('include-prerelease') || 'false').toLowerCase() ===
                     'true';
