@@ -23,7 +23,7 @@ export async function run() {
       }
     }
 
-    if (versions) {
+    if (versions.length) {
       const includePrerelease: boolean =
         (core.getInput('include-prerelease') || 'false').toLowerCase() ===
         'true';
@@ -34,8 +34,9 @@ export async function run() {
           includePrerelease
         );
         await dotnetInstaller.installDotnet();
+        
       }
-      dotnetInstaller.AddPath();
+      dotnetInstaller.addToPath()
     }
 
     const sourceUrl: string = core.getInput('source-url');

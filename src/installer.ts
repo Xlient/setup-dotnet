@@ -170,7 +170,7 @@ export class DotnetCoreInstaller {
     }
   }
 
-  AddPath() {
+   addToPath() {
     if (process.env['DOTNET_INSTALL_DIR']) {
       core.addPath(process.env['DOTNET_INSTALL_DIR']);
       core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);

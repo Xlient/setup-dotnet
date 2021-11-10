@@ -8683,7 +8683,7 @@ function run() {
                     versions[0] = getVersionFromGlobalJson(globalJsonPath);
                 }
             }
-            if (versions) {
+            if (versions.length) {
                 const includePrerelease = (core.getInput('include-prerelease') || 'false').toLowerCase() ===
                     'true';
                 let dotnetInstaller;
@@ -8691,7 +8691,7 @@ function run() {
                     dotnetInstaller = new installer.DotnetCoreInstaller(version, includePrerelease);
                     yield dotnetInstaller.installDotnet();
                 }
-                dotnetInstaller.AddPath();
+                dotnetInstaller.addToPath();
             }
             const sourceUrl = core.getInput('source-url');
             const configFile = core.getInput('config-file');
@@ -18109,7 +18109,7 @@ class DotnetCoreInstaller {
             }
         });
     }
-    AddPath() {
+    addToPath() {
         if (process.env['DOTNET_INSTALL_DIR']) {
             core.addPath(process.env['DOTNET_INSTALL_DIR']);
             core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);
