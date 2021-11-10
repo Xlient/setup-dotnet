@@ -8686,8 +8686,12 @@ function run() {
             if (versions) {
                 const includePrerelease = (core.getInput('include-prerelease') || 'false').toLowerCase() ===
                     'true';
-                const dotnetInstaller = new installer.DotnetCoreInstaller(versions, includePrerelease);
-                yield dotnetInstaller.installDotnet();
+                let dotnetInstaller;
+                for (const version of versions) {
+                    dotnetInstaller = new installer.DotnetCoreInstaller(version, includePrerelease);
+                    yield dotnetInstaller.installDotnet();
+                }
+                dotnetInstaller.AddPath();
             }
             const sourceUrl = core.getInput('source-url');
             const configFile = core.getInput('config-file');
@@ -17963,13 +17967,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DotnetCoreInstaller = exports.DotNetVersionInfo = void 0;
 // Load tempDirectory before it gets wiped by tool-cache
@@ -18035,215 +18032,101 @@ class DotNetVersionInfo {
 }
 exports.DotNetVersionInfo = DotNetVersionInfo;
 class DotnetCoreInstaller {
-    constructor(versions, includePrerelease = false) {
-        this.versions = versions;
+    constructor(version, includePrerelease = false) {
+        this.version = version;
         this.includePrerelease = includePrerelease;
     }
     installDotnet() {
-        var e_1, _a;
         return __awaiter(this, void 0, void 0, function* () {
             let output = '';
             let resultCode = 0;
-            try {
-                for (var _b = __asyncValues(this.versions), _c; _c = yield _b.next(), !_c.done;) {
-                    const version = _c.value;
-                    let calculatedVersion = yield this.resolveVersion(new DotNetVersionInfo(version));
-                    var envVariables = {};
-                    for (let key in process.env) {
-                        if (process.env[key]) {
-                            let value = process.env[key];
-                            envVariables[key] = value;
-                        }
-                    }
-                    if (IS_WINDOWS) {
-                        let escapedScript = path
-                            .join(__dirname, '..', 'externals', 'install-dotnet.ps1')
-                            .replace(/'/g, "''");
-                        let command = `& '${escapedScript}'`;
-                        if (calculatedVersion) {
-                            command += ` -Version ${calculatedVersion}`;
-                        }
-                        if (process.env['https_proxy'] != null) {
-                            command += ` -ProxyAddress ${process.env['https_proxy']}`;
-                        }
-                        // This is not currently an option
-                        if (process.env['no_proxy'] != null) {
-                            command += ` -ProxyBypassList ${process.env['no_proxy']}`;
-                        }
-                        // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
-                        const powershellPath = yield io.which('powershell', true);
-                        var options = {
-                            listeners: {
-                                stdout: (data) => {
-                                    output += data.toString();
-                                }
-                            },
-                            env: envVariables
-                        };
-                        resultCode = yield exec.exec(`"${powershellPath}"`, [
-                            '-NoLogo',
-                            '-Sta',
-                            '-NoProfile',
-                            '-NonInteractive',
-                            '-ExecutionPolicy',
-                            'Unrestricted',
-                            '-Command',
-                            command
-                        ], options);
-                    }
-                    else {
-                        let escapedScript = path
-                            .join(__dirname, '..', 'externals', 'install-dotnet.sh')
-                            .replace(/'/g, "''");
-                        fs_1.chmodSync(escapedScript, '777');
-                        const scriptPath = yield io.which(escapedScript, true);
-                        let scriptArguments = [];
-                        if (calculatedVersion) {
-                            scriptArguments.push('--version', calculatedVersion);
-                        }
-                        // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
-                        resultCode = yield exec.exec(`"${scriptPath}"`, scriptArguments, {
-                            listeners: {
-                                stdout: (data) => {
-                                    output += data.toString();
-                                }
-                            },
-                            env: envVariables
-                        });
-                    }
+            let calculatedVersion = yield this.resolveVersion(new DotNetVersionInfo(this.version));
+            var envVariables = {};
+            for (let key in process.env) {
+                if (process.env[key]) {
+                    let value = process.env[key];
+                    envVariables[key] = value;
                 }
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
+            if (IS_WINDOWS) {
+                let escapedScript = path
+                    .join(__dirname, '..', 'externals', 'install-dotnet.ps1')
+                    .replace(/'/g, "''");
+                let command = `& '${escapedScript}'`;
+                if (calculatedVersion) {
+                    command += ` -Version ${calculatedVersion}`;
                 }
-                finally { if (e_1) throw e_1.error; }
-            }
-            if (process.env['DOTNET_INSTALL_DIR']) {
-                core.addPath(process.env['DOTNET_INSTALL_DIR']);
-                core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);
+                if (process.env['https_proxy'] != null) {
+                    command += ` -ProxyAddress ${process.env['https_proxy']}`;
+                }
+                // This is not currently an option
+                if (process.env['no_proxy'] != null) {
+                    command += ` -ProxyBypassList ${process.env['no_proxy']}`;
+                }
+                // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
+                const powershellPath = yield io.which('powershell', true);
+                var options = {
+                    listeners: {
+                        stdout: (data) => {
+                            output += data.toString();
+                        }
+                    },
+                    env: envVariables
+                };
+                resultCode = yield exec.exec(`"${powershellPath}"`, [
+                    '-NoLogo',
+                    '-Sta',
+                    '-NoProfile',
+                    '-NonInteractive',
+                    '-ExecutionPolicy',
+                    'Unrestricted',
+                    '-Command',
+                    command
+                ], options);
             }
             else {
-                if (IS_WINDOWS) {
-                    // This is the default set in install-dotnet.ps1
-                    core.addPath(path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
-                    core.exportVariable('DOTNET_ROOT', path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
+                let escapedScript = path
+                    .join(__dirname, '..', 'externals', 'install-dotnet.sh')
+                    .replace(/'/g, "''");
+                fs_1.chmodSync(escapedScript, '777');
+                const scriptPath = yield io.which(escapedScript, true);
+                let scriptArguments = [];
+                if (calculatedVersion) {
+                    scriptArguments.push('--version', calculatedVersion);
                 }
-                else {
-                    // This is the default set in install-dotnet.sh
-                    core.addPath(path.join(process.env['HOME'] + '', '.dotnet'));
-                    core.exportVariable('DOTNET_ROOT', path.join(process.env['HOME'] + '', '.dotnet'));
-                }
+                // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
+                resultCode = yield exec.exec(`"${scriptPath}"`, scriptArguments, {
+                    listeners: {
+                        stdout: (data) => {
+                            output += data.toString();
+                        }
+                    },
+                    env: envVariables
+                });
             }
-            console.log(process.env['PATH']);
             if (resultCode != 0) {
                 throw new Error(`Failed to install dotnet ${resultCode}. ${output}`);
             }
         });
     }
-    installDotnetVersions() {
-        var e_2, _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            let output = '';
-            let resultCode = 0;
-            try {
-                for (var _b = __asyncValues(this.versions), _c; _c = yield _b.next(), !_c.done;) {
-                    const version = _c.value;
-                    let calculatedVersion = yield this.resolveVersion(new DotNetVersionInfo(version));
-                    var envVariables = {};
-                    for (let key in process.env) {
-                        if (process.env[key]) {
-                            let value = process.env[key];
-                            envVariables[key] = value;
-                        }
-                    }
-                    if (IS_WINDOWS) {
-                        let escapedScript = path
-                            .join(__dirname, '..', 'externals', 'install-dotnet.ps1')
-                            .replace(/'/g, "''");
-                        let command = `& '${escapedScript}'`;
-                        if (calculatedVersion) {
-                            command += ` -Version ${calculatedVersion}`;
-                        }
-                        if (process.env['https_proxy'] != null) {
-                            command += ` -ProxyAddress ${process.env['https_proxy']}`;
-                        }
-                        // This is not currently an option
-                        if (process.env['no_proxy'] != null) {
-                            command += ` -ProxyBypassList ${process.env['no_proxy']}`;
-                        }
-                        // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
-                        const powershellPath = yield io.which('powershell', true);
-                        var options = {
-                            listeners: {
-                                stdout: (data) => {
-                                    output += data.toString();
-                                }
-                            },
-                            env: envVariables
-                        };
-                        resultCode = yield exec.exec(`"${powershellPath}"`, [
-                            '-NoLogo',
-                            '-Sta',
-                            '-NoProfile',
-                            '-NonInteractive',
-                            '-ExecutionPolicy',
-                            'Unrestricted',
-                            '-Command',
-                            command
-                        ], options);
-                    }
-                    else {
-                        let escapedScript = path
-                            .join(__dirname, '..', 'externals', 'install-dotnet.sh')
-                            .replace(/'/g, "''");
-                        fs_1.chmodSync(escapedScript, '777');
-                        const scriptPath = yield io.which(escapedScript, true);
-                        let scriptArguments = [];
-                        if (calculatedVersion) {
-                            scriptArguments.push('--version', calculatedVersion);
-                        }
-                        // process.env must be explicitly passed in for DOTNET_INSTALL_DIR to be used
-                        resultCode = yield exec.exec(`"${scriptPath}"`, scriptArguments, {
-                            listeners: {
-                                stdout: (data) => {
-                                    output += data.toString();
-                                }
-                            },
-                            env: envVariables
-                        });
-                    }
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            if (process.env['DOTNET_INSTALL_DIR']) {
-                core.addPath(process.env['DOTNET_INSTALL_DIR']);
-                core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);
+    AddPath() {
+        if (process.env['DOTNET_INSTALL_DIR']) {
+            core.addPath(process.env['DOTNET_INSTALL_DIR']);
+            core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);
+        }
+        else {
+            if (IS_WINDOWS) {
+                // This is the default set in install-dotnet.ps1
+                core.addPath(path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
+                core.exportVariable('DOTNET_ROOT', path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
             }
             else {
-                if (IS_WINDOWS) {
-                    // This is the default set in install-dotnet.ps1
-                    core.addPath(path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
-                    core.exportVariable('DOTNET_ROOT', path.join(process.env['LocalAppData'] + '', 'Microsoft', 'dotnet'));
-                }
-                else {
-                    // This is the default set in install-dotnet.sh
-                    core.addPath(path.join(process.env['HOME'] + '', '.dotnet'));
-                    core.exportVariable('DOTNET_ROOT', path.join(process.env['HOME'] + '', '.dotnet'));
-                }
+                // This is the default set in install-dotnet.sh
+                core.addPath(path.join(process.env['HOME'] + '', '.dotnet'));
+                core.exportVariable('DOTNET_ROOT', path.join(process.env['HOME'] + '', '.dotnet'));
             }
-            console.log(process.env['PATH']);
-            if (resultCode != 0) {
-                throw new Error(`Failed to install dotnet ${resultCode}. ${output}`);
-            }
-        });
+        }
+        console.log(process.env['PATH']);
     }
     // versionInfo - versionInfo of the SDK/Runtime
     resolveVersion(versionInfo) {
