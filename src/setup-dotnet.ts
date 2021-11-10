@@ -34,9 +34,8 @@ export async function run() {
           includePrerelease
         );
         await dotnetInstaller.installDotnet();
-        
       }
-      dotnetInstaller.addToPath()
+      dotnetInstaller.addToPath();
     }
 
     const sourceUrl: string = core.getInput('source-url');
