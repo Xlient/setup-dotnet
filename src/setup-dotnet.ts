@@ -35,7 +35,7 @@ export async function run() {
         );
         await dotnetInstaller.installDotnet();
       }
-      dotnetInstaller.addToPath();
+      installer.DotnetCoreInstaller.addToPath();
     }
 
     const sourceUrl: string = core.getInput('source-url');

@@ -8691,7 +8691,7 @@ function run() {
                     dotnetInstaller = new installer.DotnetCoreInstaller(version, includePrerelease);
                     yield dotnetInstaller.installDotnet();
                 }
-                dotnetInstaller.addToPath();
+                installer.DotnetCoreInstaller.addToPath();
             }
             const sourceUrl = core.getInput('source-url');
             const configFile = core.getInput('config-file');
@@ -18109,7 +18109,7 @@ class DotnetCoreInstaller {
             }
         });
     }
-    addToPath() {
+    static addToPath() {
         if (process.env['DOTNET_INSTALL_DIR']) {
             core.addPath(process.env['DOTNET_INSTALL_DIR']);
             core.exportVariable('DOTNET_ROOT', process.env['DOTNET_INSTALL_DIR']);
