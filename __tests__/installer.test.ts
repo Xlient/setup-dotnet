@@ -38,7 +38,6 @@ describe('installer tests', () => {
     for (const version of versions) {
       await getDotnet(version);
     }
-    installer.DotnetCoreInstaller.addToPath();
     expect(fs.existsSync(path.join(toolDir, 'sdk', '2.2.207'))).toBe(true);
     expect(fs.existsSync(path.join(toolDir, 'sdk', '3.1.120'))).toBe(true);
 
@@ -148,4 +147,5 @@ function normalizeFileContents(contents: string): string {
 async function getDotnet(version: string): Promise<void> {
   const dotnetInstaller = new installer.DotnetCoreInstaller(version);
   await dotnetInstaller.installDotnet();
+  installer.DotnetCoreInstaller.addToPath();
 }
