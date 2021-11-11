@@ -52,21 +52,21 @@ Write-Host "Sample output: $sample_output"
 # For Side-by-Side installs we want to run the tests twice, for a single install the tests will run once
 if ($args[2])
 {
-  if ($sample_output -notlike "*Test Run Successful.*Test Run Successful.*Test Run Successful.*")
+  if ($sample_output -notlike "*Passed!*Passed!*Passed!*")
   {
     throw "Unexpected output"
   }
 }
 if ($args[1])
 {
-  if ($sample_output -notlike "*Test Run Successful.*Test Run Successful.*")
+  if ($sample_output -notlike "*Passed!*Passed!*")
   {
     throw "Unexpected output"
   }
 }
 else
 {
-  if ($sample_output -notlike "*Test Run Successful.*")
+  if ($sample_output -notlike "*Passed!*")
   {
     throw "Unexpected output"
   }
