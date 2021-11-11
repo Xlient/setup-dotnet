@@ -45,13 +45,15 @@ jobs:
       - name: Clear toolcache
         shell: pwsh
         run: __tests__/clear-toolcache.ps1 ${{ runner.os }}
-      - name: Setup dotnet versions
+      - name: Setup dotnet 2.2.402 and 3.1.404
         uses: ./
         with:
-          dotnet-version: '3.1.201,2.2.402'
+          dotnet-version: |
+             2.2.402
+             3.1.404
       - name: Verify dotnet
         shell: pwsh
-        run: __tests__/verify-dotnet.ps1 3.1.201 2.2.402
+        run: __tests__/verify-dotnet.ps1 2.2.402 3.1.404
 
   test-setup-full-version:
     runs-on: ${{ matrix.operating-system }}

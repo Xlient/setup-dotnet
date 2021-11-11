@@ -8,7 +8,6 @@ Write-Host "Found '$dotnet'"
 
 if($args.count -eq 1)
 {
-
   $version = & $dotnet --version | Out-String | ForEach-Object { $_.Trim() }
   Write-Host "Version $version"
   if (-not ($version.StartsWith($args[0].ToString())))
@@ -30,7 +29,6 @@ if ($args[1])
       if ($version.StartsWith($arg.ToString())) 
       {
         $InstalledVersionCount++
-        
       }
     }
    }

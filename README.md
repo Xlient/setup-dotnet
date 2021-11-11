@@ -29,7 +29,18 @@ steps:
     dotnet-version: '3.1.x' # SDK Version to use; x will use the latest version of the 3.1 channel
 - run: dotnet build <my project>
 ```
-
+Multiple versions:
+```yml
+steps:
+- name: Setup dotnet
+- uses: actions/checkout@v2
+-  uses: actions/setup-dotnet@v1
+  with:
+    dotnet-version: | 
+      3.1.201
+      2.2.207 
+- run: dotnet build <my project>
+```
 Preview version:
 ```yml
 steps:
