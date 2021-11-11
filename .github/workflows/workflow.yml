@@ -51,9 +51,10 @@ jobs:
           dotnet-version: |
              2.2.402
              3.1.404
+             3.0.x
       - name: Verify dotnet
         shell: pwsh
-        run: __tests__/verify-dotnet.ps1 2.2.402 3.1.404
+        run: __tests__/verify-dotnet.ps1 2.2.402 3.1.404 3.1
 
   test-setup-full-version:
     runs-on: ${{ matrix.operating-system }}
