@@ -26,7 +26,7 @@ if ($args[1])
   Write-Host "$($versions.Count)"
   Write-Host "$($versions.GetType())"
   for($i=0; $i -lt $args.Count; i++){
-    foreach (($j=0; $j -lt $args.Count; j++))
+    for($j=0; $j -lt $args.Count; j++)
     {
       if ($version[j].StartsWith($arg[i].ToString())) 
       {
