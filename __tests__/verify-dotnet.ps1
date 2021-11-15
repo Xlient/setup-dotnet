@@ -28,7 +28,7 @@ if ($args[1])
   for($i=0; $i -lt $args.Count; i++){
     for($j=0; $j -lt $args.Count; j++)
     {
-      if ($version[j].StartsWith($arg[i].ToString())) 
+      if ($version[$j].StartsWith($arg[$i].ToString())) 
       {
         $InstalledVersionCount++
         Write-Host "$version"
