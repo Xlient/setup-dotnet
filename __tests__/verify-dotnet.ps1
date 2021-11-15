@@ -25,10 +25,10 @@ if ($args[1])
   $InstalledVersionCount = 0
   Write-Host "$($versions.Count)"
   Write-Host "$($versions.GetType())"
-  foreach($arg in $args){
-    foreach ($version in $versions)
+  for($i=0; $i -lt $args.Count; i++){
+    foreach (($j=0; $j -lt $args.Count; j++))
     {
-      if ($version.StartsWith($arg.ToString())) 
+      if ($version[j].StartsWith($arg[i].ToString())) 
       {
         $InstalledVersionCount++
         Write-Host "$version"
