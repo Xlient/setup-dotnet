@@ -28,7 +28,7 @@ if ($args[1])
     {
       if ($version.StartsWith($arg.ToString())) 
       {
-           $InstalledVersionCount++
+           ++$InstalledVersionCount
       }
     }
    }
