@@ -30,7 +30,10 @@ if ($args[1])
     {
       if ($versions[$j].StartsWith($args[$i].ToString())) 
       {
-        $InstalledVersionCount++
+        if($i -ne 0 && $versions[j] -ne $versions[j+1])
+        {
+             $InstalledVersionCount++
+        }
       }
     }
    }
