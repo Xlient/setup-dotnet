@@ -23,10 +23,11 @@ if ($args[1])
   $versions = & $dotnet --list-sdks | ForEach-Object { $_.SubString(0, $_.IndexOf('[')).Trim() } 
   Write-Host "Installed versions: $versions"
   $InstalledVersionCount = 0
+    Write-Host "$($args.Count)"
   Write-Host "$($versions.Count)"
   Write-Host "$($versions.GetType())"
-  for($i=0; $i -lt $args.Count; $i++){
-    for($j=0; $j -lt $args.Count; $j++)
+  for($i=0; $i -lt $args.Count -1; $i++){
+    for($j=0; $j -lt $version.Count; $j++)
     {
       if ($versions[$j].StartsWith($args[$i].ToString())) 
       {
