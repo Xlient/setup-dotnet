@@ -25,12 +25,12 @@ if ($args[1])
   $InstalledVersionCount = 0
   foreach($arg in $args)
   {
-    foreach($version in $versions)
+    foreach($ver in $versions)
     {
-      if ($version.StartsWith($arg.ToString())) 
+      if ($ver.StartsWith($arg.ToString())) 
       {
            $InstalledVersionCount++
-           Write-Host "$version"
+           Write-Host "$ver"
       }
     }
    }
