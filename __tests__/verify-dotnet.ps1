@@ -23,24 +23,19 @@ if ($args[1])
   $versions = & $dotnet --list-sdks | ForEach-Object { $_.SubString(0, $_.IndexOf('[')).Trim() } 
   Write-Host "Installed versions: $versions"
   $InstalledVersionCount = 0
-    Write-Host "$($args.Count)"
-  Write-Host "$($versions.Count)"
-  Write-Host "$($versions.GetType())"
-  for($i=0; $i -lt $args.Count -1; $i++){
-    for($j=0; $j -lt $version.Count; $j++)
+  foreach($arg in $args){
+    foreach($version in $versions)
     {
-      if ($versions[$j].StartsWith($args[$i].ToString())) 
+      if ($version.StartsWith($arg.ToString())) 
       {
-        if($i -ne 0 && $versions[$j] -ne $versions[$j+1])
-        {
-             $InstalledVersionCount++
-        }
+           $InstalledVersionCount++
       }
     }
    }
   if ( $InstalledVersionCount -ne $args.Count)
   {
     Write-Host "PATH='$env:PATH'"
+    Write-Host "$InstalledVersionCount"
     throw "Unexpected version"
   }
 }
