@@ -25,19 +25,17 @@ if ($args[1])
   $InstalledVersionCount = 0
   foreach($arg in $args)
   {
-    foreach($ver in $versions)
+    foreach($version in $versions)
     {
-      if ($ver.StartsWith($arg.ToString())) 
+      if ($version.StartsWith($arg.ToString())) 
       {
            $InstalledVersionCount++
-           Write-Host "$ver"
       }
     }
    }
   if ( $InstalledVersionCount -ne $args.Count)
   {
     Write-Host "PATH='$env:PATH'"
-    Write-Host "$InstalledVersionCount"
     throw "Unexpected version"
   }
 }
